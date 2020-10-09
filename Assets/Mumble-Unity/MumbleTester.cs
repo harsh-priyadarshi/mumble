@@ -192,7 +192,8 @@ public class MumbleTester : MonoBehaviour {
             numPacketsLost += numLostThisSample;
         }
     }
-	void Update () {
+
+    void Update () {
         if (!_mumbleClient.ReadyToConnect)
             return;
         if (Input.GetKeyDown(KeyCode.S))
@@ -203,6 +204,16 @@ public class MumbleTester : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.J))
         {
             print("Will attempt to join channel " + ChannelToJoin);
+
+            if (!ChannelExists(ChannelToJoin))
+            {
+                _mumbleClient.AddChannel(new MumbleProto.ChannelState()
+                {
+                    Name = ChannelToJoin,
+                    Temporary = true,
+                });
+            }
+
             _mumbleClient.JoinChannel(ChannelToJoin);
         }
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -239,5 +250,16 @@ public class MumbleTester : MonoBehaviour {
             Debug.Log("Decreasing bitrate " + currentBW + "->" + newBitrate);
             MyMumbleMic.SetBitrate(newBitrate);
         }
+    }
+
+    private bool ChannelExists(string channelName)
+    {
+        var channels = _mumbleClient.GetAllChannels();
+        foreach (var item in channels)
+        {
+            if (item.Value.Name == channelName)
+                return true;
+        }
+        return false;
     }
 }
