@@ -255,6 +255,10 @@ public class MumbleTester : MonoBehaviour {
     private bool ChannelExists(string channelName)
     {
         var channels = _mumbleClient.GetAllChannels();
+
+        foreach (var item in channels)
+            Debug.LogError(item.Value.Name);
+
         foreach (var item in channels)
         {
             if (item.Value.Name == channelName)
